@@ -1,3 +1,5 @@
+import { RoleArt } from '../components/RoleArt'
+
 type HowToProps = {
   onBack: () => void
 }
@@ -25,21 +27,22 @@ export function HowTo({ onBack }: HowToProps) {
         </p>
       </section>
 
-      <section className="card">
-        <h2>Les rôles</h2>
-        <ul className="role-list">
-          <li>
-            <strong>Civils</strong> — même mot. Éliminez tous les infiltrés.
-          </li>
-          <li>
-            <strong>Undercover</strong> — mot voisin. Survivez jusqu’à ce qu’il
-            ne reste plus qu’un civil.
-          </li>
-          <li>
-            <strong>Mr. White</strong> — aucun mot. Bluffez, ou gagnez en
-            devinant le mot des civils si vous êtes éliminé.
-          </li>
-        </ul>
+      <section className="role-gallery">
+        <article className="role-card">
+          <RoleArt role="civilian" alt="Civil" />
+          <h2>Civils</h2>
+          <p>Même mot. Éliminez tous les infiltrés.</p>
+        </article>
+        <article className="role-card">
+          <RoleArt role="undercover" alt="Undercover" />
+          <h2>Undercover</h2>
+          <p>Mot voisin. Survivez jusqu’à ce qu’il ne reste plus qu’un civil.</p>
+        </article>
+        <article className="role-card">
+          <RoleArt role="white" alt="Mr. White" />
+          <h2>Mr. White</h2>
+          <p>Aucun mot. Bluffez, ou gagnez en devinant le mot des civils.</p>
+        </article>
       </section>
 
       <section className="card">

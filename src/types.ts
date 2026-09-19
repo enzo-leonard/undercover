@@ -26,4 +26,5 @@ export type Game = {
   undercoverWord: string
   round: number
   starterId: string
+  speakOrder: string[]
 }

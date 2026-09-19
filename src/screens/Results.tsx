@@ -1,3 +1,4 @@
+import { RoleArt } from '../components/RoleArt'
 import { ROLE_LABEL, WINNER_COPY, wordFor } from '../lib/game'
 import type { Game, Winner } from '../types'
 
@@ -28,6 +29,7 @@ export function Results({ game, winner, onReplay, onNew, onHome }: ResultsProps)
       <ul className="result-list">
         {game.players.map((p) => (
           <li key={p.id} className={!p.alive ? 'out' : undefined}>
+            <RoleArt role={p.role} className="role-art sm" alt={ROLE_LABEL[p.role]} />
             <div>
               <strong>{p.name}</strong>
               <span>

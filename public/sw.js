@@ -1,4 +1,4 @@
-const CACHE = 'undercover-v1'
+const CACHE = 'undercover-v2'
 
 self.addEventListener('install', (event) => {
   event.waitUntil(self.skipWaiting())

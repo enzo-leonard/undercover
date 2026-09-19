@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { RoleArt } from '../components/RoleArt'
 
 type HomeProps = {
   onPlay: () => void
@@ -30,13 +31,10 @@ export function Home({ onPlay, onPairs, onHowTo }: HomeProps) {
 
   return (
     <div className="page home">
-      <div className="mark" aria-hidden="true">
-        <svg viewBox="0 0 120 120" className="mark-svg">
-          <circle cx="60" cy="60" r="56" fill="none" stroke="currentColor" strokeWidth="1.2" />
-          <circle cx="60" cy="60" r="40" fill="none" stroke="currentColor" strokeWidth="1.2" />
-          <ellipse cx="60" cy="60" rx="28" ry="14" fill="none" stroke="currentColor" strokeWidth="2" />
-          <circle cx="60" cy="60" r="7" fill="currentColor" />
-        </svg>
+      <div className="home-cast" aria-hidden="true">
+        <RoleArt role="civilian" />
+        <RoleArt role="undercover" />
+        <RoleArt role="white" />
       </div>
       <p className="eyebrow">Jeu d’ambiance · 3 à 20 joueurs</p>
       <h1>Undercover</h1>

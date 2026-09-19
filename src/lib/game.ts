@@ -87,13 +87,15 @@ export function createGame(
   const swap = Math.random() < 0.5
   const civilianWord = swap ? pair.undercover : pair.civilian
   const undercoverWord = swap ? pair.civilian : pair.undercover
+  const speakOrder = speakOrderFor(players)
   return {
     players,
     pair,
     civilianWord,
     undercoverWord,
     round: 1,
-    starterId: players[Math.floor(Math.random() * players.length)].id,
+    speakOrder,
+    starterId: speakOrder[0] ?? players[0].id,
   }
 }
 
@@ -107,16 +109,53 @@ export function alivePlayers(game: Game) {
   return game.players.filter((p) => p.alive)
 }
 
-export function nextStarter(game: Game, eliminatedId: string) {
-  const alive = game.players.filter((p) => p.alive && p.id !== eliminatedId)
-  if (alive.length === 0) return game.starterId
-  if (game.starterId === eliminatedId) {
-    return alive[Math.floor(Math.random() * alive.length)].id
+export function whitePositionWeight(index: number) {
+  if (index <= 0) return 1
+  if (index === 1) return 10
+  if (index === 2) return 50
+  return 50 + (index - 2) * 45
+}
+
+function pickWeightedIndex(weights: number[]) {
+  const total = weights.reduce((sum, weight) => sum + weight, 0)
+  let roll = Math.random() * total
+  for (let i = 0; i < weights.length; i++) {
+    roll -= weights[i]
+    if (roll <= 0) return i
   }
-  const stillThere = alive.some((p) => p.id === game.starterId)
-  return stillThere
-    ? game.starterId
-    : alive[Math.floor(Math.random() * alive.length)].id
+  return weights.length - 1
+}
+
+export function speakOrderFor(players: Player[]) {
+  const alive = players.filter((p) => p.alive)
+  const whites = shuffle(alive.filter((p) => p.role === 'white'))
+  const others = shuffle(alive.filter((p) => p.role !== 'white'))
+  const slots: Array<string | null> = Array.from({ length: alive.length }, () => null)
+
+  for (const white of whites) {
+    const free = slots.flatMap((slot, i) => (slot === null ? [i] : []))
+    const chosen = free[pickWeightedIndex(free.map(whitePositionWeight))]
+    slots[chosen] = white.id
+  }
+
+  let next = 0
+  return slots.map((slot) => {
+    if (slot) return slot
+    const other = others[next]
+    next += 1
+    return other.id
+  })
+}
+
+export function advanceRound(game: Game, nextPlayers: Player[]): Game {
+  const speakOrder = speakOrderFor(nextPlayers)
+  return {
+    ...game,
+    players: nextPlayers,
+    round: game.round + 1,
+    speakOrder,
+    starterId: speakOrder[0] ?? game.starterId,
+  }
 }
 
 export function winnerAfter(players: Player[]): Exclude<Winner, 'white'> | null {

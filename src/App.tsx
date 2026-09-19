@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react'
 import { DEFAULT_PAIRS } from './data/wordPairs'
 import {
+  advanceRound,
   clampRoles,
   createGame,
   filterPairs,
   guessMatches,
-  nextStarter,
   pickPair,
   winnerAfter,
 } from './lib/game'
@@ -127,13 +127,7 @@ export default function App() {
       setScreen('results')
       return
     }
-    const out = nextPlayers.find((p) => !p.alive && game.players.find((g) => g.id === p.id)?.alive)
-    setGame({
-      ...game,
-      players: nextPlayers,
-      round: game.round + 1,
-      starterId: nextStarter(game, out?.id ?? ''),
-    })
+    setGame(advanceRound(game, nextPlayers))
     setScreen('table')
   }
 
@@ -254,11 +248,7 @@ export default function App() {
               setScreen('results')
               return
             }
-            setGame({
-              ...game,
-              round: game.round + 1,
-              starterId: nextStarter(game, eliminatedId ?? ''),
-            })
+            setGame(advanceRound(game, game.players))
             setScreen('table')
           }}
         />

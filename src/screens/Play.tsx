@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { RoleArt } from '../components/RoleArt'
 import { ROLE_LABEL } from '../lib/game'
 import type { Game, Player } from '../types'
 
@@ -9,8 +10,9 @@ type TableProps = {
 }
 
 export function Table({ game, onVote, onQuit }: TableProps) {
-  const starter = game.players.find((p) => p.id === game.starterId)
-  const alive = game.players.filter((p) => p.alive)
+  const order = game.speakOrder
+    .map((id) => game.players.find((p) => p.id === id))
+    .filter((p): p is Player => Boolean(p && p.alive))
   const out = game.players.filter((p) => !p.alive)
 
   return (
@@ -20,20 +22,17 @@ export function Table({ game, onVote, onQuit }: TableProps) {
         <h1>Autour de la table</h1>
       </header>
       <section className="card highlight">
-        <p className="hint">Le premier à parler</p>
-        <p className="starter">{starter?.name ?? '—'}</p>
-        <p className="hint">Un mot chacun, assez vague. Puis on discute et on vote.</p>
-      </section>
-      <section className="card">
-        <h2>Encore en jeu</h2>
-        <ul className="player-grid">
-          {alive.map((p) => (
-            <li key={p.id} className="seat">
-              <span className="avatar">{p.name.slice(0, 1).toUpperCase()}</span>
+        <p className="hint">Ordre de parole</p>
+        <p className="starter">{order[0]?.name ?? '—'}</p>
+        <p className="hint">commence. Un mot chacun, assez vague. Puis on discute et on vote.</p>
+        <ol className="speak-order">
+          {order.map((p, i) => (
+            <li key={p.id} className={i === 0 ? 'first' : undefined}>
+              <span>{i + 1}</span>
               {p.name}
             </li>
           ))}
-        </ul>
+        </ol>
       </section>
       {out.length > 0 ? (
         <section className="card muted">
@@ -41,6 +40,7 @@ export function Table({ game, onVote, onQuit }: TableProps) {
           <ul className="out-list">
             {out.map((p) => (
               <li key={p.id}>
+                <RoleArt role={p.role} className="role-art xs" />
                 {p.name} · {ROLE_LABEL[p.role]}
               </li>
             ))}
@@ -113,6 +113,7 @@ export function Elimination({ player, onContinue, onWhiteGuess }: EliminationPro
       <p className="eyebrow">Éliminé</p>
       <h1>{player.name}</h1>
       <div className={`role-banner role-${player.role}`}>
+        <RoleArt role={player.role} className="role-art lg" alt={ROLE_LABEL[player.role]} />
         <p>était</p>
         <strong>{ROLE_LABEL[player.role]}</strong>
       </div>
@@ -139,6 +140,7 @@ type WhiteMissProps = {
 export function WhiteMiss({ onContinue }: WhiteMissProps) {
   return (
     <div className="page reveal">
+      <RoleArt role="white" className="role-art lg" alt="" />
       <p className="eyebrow">Mr. White</p>
       <h1>Ce n’est pas le mot</h1>
       <p className="lede">La partie continue. Le mot des civils reste secret.</p>
@@ -160,6 +162,7 @@ export function WhiteGuess({ playerName, onGuess }: WhiteGuessProps) {
   return (
     <div className="page">
       <header className="topbar plain">
+        <RoleArt role="white" className="role-art md" alt="" />
         <p className="eyebrow">{playerName} · Mr. White</p>
         <h1>Quel est le mot des civils ?</h1>
       </header>

@@ -1,3 +1,4 @@
+import { RoleArt } from '../components/RoleArt'
 import { wordFor } from '../lib/game'
 import type { Game, Player } from '../types'
 
@@ -44,6 +45,7 @@ export function Reveal({ game, player, open, remaining, onOpen, onNext }: Reveal
           </>
         ) : (
           <>
+            <RoleArt role="white" className="role-art md" alt="" />
             <p className="word-label">Ton mot secret</p>
             <p className="word blank-word">???</p>
             <p className="word-note">Tu n’as pas de mot. Improvise.</p>

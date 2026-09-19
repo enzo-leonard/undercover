@@ -1,4 +1,5 @@
 import { useMemo, useState, type FormEvent } from 'react'
+import { RoleArt } from '../components/RoleArt'
 import { CATEGORIES } from '../data/wordPairs'
 import { clampRoles, filterPairs, maxInfiltrators, suggestedRoles } from '../lib/game'
 import type { Difficulty, WordPair, WordSource } from '../types'
@@ -181,6 +182,7 @@ export function Setup({
         </p>
         <div className="steppers">
           <Stepper
+            role="undercover"
             label="Undercover"
             value={roles.undercover}
             min={roles.white === 0 ? 1 : 0}
@@ -188,6 +190,7 @@ export function Setup({
             onChange={setUndercover}
           />
           <Stepper
+            role="white"
             label="Mr. White"
             value={roles.white}
             min={0}
@@ -204,24 +207,27 @@ export function Setup({
 
       <section className="card">
         <h2>Mots</h2>
-        <div className="source-list">
+        <div className="choice-list">
           {(
             [
-              ['default', 'Liste par défaut'],
-              ['custom', `Mes paires${customPairs.length ? ` (${customPairs.length})` : ''}`],
-              ['all', 'Toutes les paires'],
-              ['pick', 'Choisir une paire'],
+              ['default', 'Liste par défaut', `${defaultPairs.length} paires prêtes`],
+              ['custom', 'Mes paires', customPairs.length ? `${customPairs.length} perso` : 'À créer'],
+              ['all', 'Toutes les paires', 'Défaut + perso'],
+              ['pick', 'Choisir une paire', 'Tu décides'],
             ] as const
-          ).map(([id, label]) => (
-            <label key={id} className="radio">
-              <input
-                type="radio"
-                name="source"
-                checked={source === id}
-                onChange={() => setSource(id)}
-              />
-              {label}
-            </label>
+          ).map(([id, label, hint]) => (
+            <button
+              key={id}
+              type="button"
+              className={source === id ? 'choice active' : 'choice'}
+              onClick={() => setSource(id)}
+            >
+              <span className="choice-mark" aria-hidden="true" />
+              <span>
+                <strong>{label}</strong>
+                <em>{hint}</em>
+              </span>
+            </button>
           ))}
         </div>
         <div className="filters tight">
@@ -275,12 +281,14 @@ export function Setup({
 }
 
 function Stepper({
+  role,
   label,
   value,
   min,
   max,
   onChange,
 }: {
+  role: 'undercover' | 'white'
   label: string
   value: number
   min: number
@@ -289,7 +297,10 @@ function Stepper({
 }) {
   return (
     <div className="stepper">
-      <span>{label}</span>
+      <span className="stepper-label">
+        <RoleArt role={role} className="role-art sm" />
+        {label}
+      </span>
       <div>
         <button type="button" onClick={() => onChange(Math.max(min, value - 1))} aria-label={`Moins de ${label}`}>
           −
