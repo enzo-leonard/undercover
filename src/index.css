@@ -329,6 +329,39 @@ select:focus {
   gap: 8px;
 }
 
+.more-options {
+  display: grid;
+  gap: 10px;
+}
+
+.more-toggle {
+  justify-self: start;
+  min-height: 40px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--gold);
+}
+
+.more-toggle::after {
+  content: ' ▾';
+}
+
+.more-toggle.open::after {
+  content: ' ▴';
+}
+
+.more-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.field-label {
+  margin-bottom: 6px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
 .pair-list,
 .role-list,
 .steps,

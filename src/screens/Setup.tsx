@@ -35,6 +35,7 @@ export function Setup({
   const [pickedId, setPickedId] = useState<string>('')
   const [difficulties, setDifficulties] = useState<Difficulty[]>(['facile', 'moyen', 'difficile'])
   const [category, setCategory] = useState('all')
+  const [moreOptions, setMoreOptions] = useState(false)
   const [error, setError] = useState('')
 
   const suggested = suggestedRoles(names.length)
@@ -230,30 +231,48 @@ export function Setup({
             </button>
           ))}
         </div>
-        <div className="filters tight">
-          <select value={category} onChange={(e) => setCategory(e.target.value)}>
-            <option value="all">Toutes les catégories</option>
-            {CATEGORIES.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-            {customPairs.some((p) => p.category === 'Perso') ? (
-              <option value="Perso">Perso</option>
-            ) : null}
-          </select>
-        </div>
-        <div className="diff-row">
-          {(['facile', 'moyen', 'difficile'] as const).map((level) => (
-            <button
-              key={level}
-              type="button"
-              className={difficulties.includes(level) ? 'pill active' : 'pill'}
-              onClick={() => toggleDifficulty(level)}
-            >
-              {level}
-            </button>
-          ))}
+        <div className="more-options">
+          <button
+            type="button"
+            className={moreOptions ? 'more-toggle open' : 'more-toggle'}
+            aria-expanded={moreOptions}
+            onClick={() => setMoreOptions((open) => !open)}
+          >
+            Plus d’options
+          </button>
+          {moreOptions ? (
+            <div className="more-panel">
+              <label>
+                Catégorie
+                <select value={category} onChange={(e) => setCategory(e.target.value)}>
+                  <option value="all">Toutes les catégories</option>
+                  {CATEGORIES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                  {customPairs.some((p) => p.category === 'Perso') ? (
+                    <option value="Perso">Perso</option>
+                  ) : null}
+                </select>
+              </label>
+              <div>
+                <p className="field-label">Difficulté</p>
+                <div className="diff-row">
+                  {(['facile', 'moyen', 'difficile'] as const).map((level) => (
+                    <button
+                      key={level}
+                      type="button"
+                      className={difficulties.includes(level) ? 'pill active' : 'pill'}
+                      onClick={() => toggleDifficulty(level)}
+                    >
+                      {level}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : null}
         </div>
         {source === 'pick' ? (
           <label>
